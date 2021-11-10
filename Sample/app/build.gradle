@@ -13,7 +13,7 @@ android {
         versionCode 1
         versionName "1.0"
     }
-
+//    viewBinding.enabled = true
     buildFeatures {
         viewBinding true
     }
@@ -30,6 +30,11 @@ android {
         checkReleaseBuilds false
         abortOnError false
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -37,5 +42,4 @@ dependencies {
     implementation "androidx.appcompat:appcompat:1.3.0"
     implementation project(':module1')
     implementation project(':module2')
-    testImplementation 'junit:junit:4.12'
 }
