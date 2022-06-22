@@ -10,7 +10,6 @@ buildscript {
         if (Boolean.valueOf(applyRemotePlugin)) {
             classpath "com.chenenyu.router:gradle-plugin:${PLUGIN_VERSION}"
         }
-        classpath "com.l3gacy.plugin:router-plugin"
     }
 }
 
@@ -26,9 +25,9 @@ tasks.register('clean', Delete) {
 }
 
 ext {
-    compileSdkVersion = 30
+    compileSdkVersion = 32
     minSdkVersion = 16
-    targetSdkVersion = 30
+    targetSdkVersion = 32
 //    compilerLoggable = false
 //    androidxVersion = "1.1.0"
 }
