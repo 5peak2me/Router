@@ -11,6 +11,7 @@ buildscript {
         if (Boolean.valueOf(applyRemotePlugin)) {
             classpath "com.chenenyu.router:gradle-plugin:${PLUGIN_VERSION}"
         }
+        classpath "com.l3gacy.plugin:router-plugin"
     }
 }
 
