@@ -1,7 +1,8 @@
 // core
-include ':router', ':compiler', ':annotation', ':gradle-plugin'
+include ':router', ':compiler', ':annotation'/*, ':gradle-plugin'*/
 // demo
 include ':app', ':module1', ':module2'
 project(':app').projectDir = new File("Sample/app")
 project(':module1').projectDir = new File("Sample/module1")
 project(':module2').projectDir = new File("Sample/module2")
+

@@ -9,4 +9,4 @@ ext {
     VERSION = ANNOTATION_VERSION
 }
 
-apply from: '../gradle/publish.gradle'
+//apply from: '../gradle/publish.gradle'

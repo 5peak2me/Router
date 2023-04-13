@@ -8,10 +8,10 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.squareup:javapoet:1.13.0'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.squareup:javapoet:1.13.0'
 //    compile project(':annotation')
-    compile "com.chenenyu.router:annotation:${ANNOTATION_VERSION}"
+    implementation "com.chenenyu.router:annotation:${ANNOTATION_VERSION}"
 }
 
 ext {
@@ -20,4 +20,4 @@ ext {
     VERSION = COMPILER_VERSION
 }
 
-apply from: '../gradle/publish.gradle'
+//apply from: '../gradle/publish.gradle'
