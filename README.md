@@ -1,5 +1,7 @@
 ![Build Status](https://travis-ci.org/chenenyu/Router.svg?branch=master) ![license](https://img.shields.io/badge/license-Apache%202-yellow.svg) ![PullRequest](https://img.shields.io/badge/PRs-welcome-brightgreen.svg) 
 
+## 修改适配 Android Gradle Plugin 7.4+，具体实现参见 [router-plugin](router-plugin)
+
 # Router
 
 [中文wiki](https://github.com/chenenyu/Router/wiki). 方便的话给个star!❤️
