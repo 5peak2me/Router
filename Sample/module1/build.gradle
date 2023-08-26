@@ -3,6 +3,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'com.chenenyu.router'
 
 android {
+    namespace = "com.chenenyu.router.module1"
+
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {

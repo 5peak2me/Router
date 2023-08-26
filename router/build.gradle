@@ -1,6 +1,8 @@
 apply plugin: 'com.android.library'
 
 android {
+    namespace = "com.chenenyu.router"
+
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
