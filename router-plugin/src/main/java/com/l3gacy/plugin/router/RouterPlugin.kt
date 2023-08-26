@@ -5,6 +5,8 @@ import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.api.variant.ScopedArtifacts
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BasePlugin
+import com.l3gacy.plugin.internal.Log
+import com.l3gacy.plugin.internal.capitalize
 import com.l3gacy.plugin.internal.property
 import com.l3gacy.plugin.router.internal.apt
 import com.l3gacy.plugin.router.internal.kapt
@@ -21,11 +23,9 @@ import java.util.Locale
  * Copyright © 2022 J!nl!n™ Inc. All rights reserved.
  *
  */
-@Suppress("UnstableApiUsage")
 class RouterPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
-
         with(target) {
             // com.android.application                      -> AppPlugin::class.java
             // com.android.library                          -> LibraryPlugin::class.java
@@ -35,11 +35,16 @@ class RouterPlugin : Plugin<Project> {
                 "android plugin required."
             }
 
+            val loggable = property(KEY_ROUTER_COMPILER_LOG, false).toBoolean()
+
             val hasKotlin = KOTLIN_PLUGINS.any(plugins::hasPlugin)
             if (hasKotlin) {
                 if (KAPT_PLUGINS.all(plugins::hasPlugin).not()) {
                     plugins.apply("kotlin-kapt")
                 }
+                kapt(loggable)
+            } else {
+                apt(loggable)
             }
 
             // Add dependencies
@@ -48,22 +53,21 @@ class RouterPlugin : Plugin<Project> {
                 if (hasKotlin) "kapt" else "annotationProcessor", NOTATION_COMPILER
             )
 
-            val loggable = property(KEY_ROUTER_COMPILER_LOG, false)
+            val debuggable = property(KEY_ROUTER_DEBUGGABLE, false).toBoolean()
+            Log.v("debuggable = $debuggable")
 
-            apt(loggable)
-
-            kapt(loggable)
+            val dump = property(KEY_DUMP_ROUTER_TABLE, false).toBoolean()
 
             plugins.withType(AppPlugin::class.java) {
-                val androidComponents =
-                    extensions.findByType(AndroidComponentsExtension::class.java)
+                val androidComponents = extensions.findByType(AndroidComponentsExtension::class.java)
                 androidComponents?.onVariants { variant ->
-                    val name = "gather${variant.name.capitalize(Locale.ROOT)}RouteTables"
+                    val variantName = variant.name.capitalize
+                    val name = "gather${variantName}RouteTables"
                     val taskProvider = tasks.register<RouterClassesTask>(name) {
                         group = "router"
-                        description = "Generate route tables for ${variant.name}"
-                        bootClasspath.set(androidComponents.sdkComponents.bootClasspath)
-                        classpath = variant.compileClasspath
+                        description = "Transform ApiHub class for ${variant.name}"
+                        this.dump.set(dump)
+                        doc.set(layout.buildDirectory.file("zeppx/router/routers-${variant.name}.json"))
                     }
                     variant.artifacts.forScope(ScopedArtifacts.Scope.ALL)
                         .use(taskProvider)
@@ -84,18 +88,32 @@ class RouterPlugin : Plugin<Project> {
         private const val DEFAULT_ROUTER_RUNTIME_VERSION = "1.7.6"
         private const val DEFAULT_ROUTER_COMPILER_VERSION = "1.7.6"
 
-        private const val NOTATION_ROUTER =
-            "com.chenenyu.router:router:$DEFAULT_ROUTER_RUNTIME_VERSION"
-        private const val NOTATION_COMPILER =
-            "com.chenenyu.router:compiler:$DEFAULT_ROUTER_COMPILER_VERSION"
+        private const val NOTATION_ROUTER = "com.chenenyu.router:router:$DEFAULT_ROUTER_RUNTIME_VERSION"
+        private const val NOTATION_COMPILER = "com.chenenyu.router:compiler:$DEFAULT_ROUTER_COMPILER_VERSION"
 
         /**
-         * 打印生成器日志的键值，可通过在 gradle.properties 文件中声明
+         * 打印路由插件日志的键值，默认关闭。可通过在 gradle.properties 文件中声明开启
+         * ```properties
+         * zeppx.router.debuggable = true
          * ```
+         */
+        private const val KEY_ROUTER_DEBUGGABLE = "zeppx.router.debuggable"
+
+        /**
+         * 打印生成器日志的键值，默认关闭。可通过在 gradle.properties 文件中声明开启
+         * ```properties
          * zeppx.router.compiler.log = true
          * ```
          */
         private const val KEY_ROUTER_COMPILER_LOG = "zeppx.router.compiler.log"
+
+        /**
+         * 生成路由表json文件的键值，默认关闭。可通过在 gradle.properties 文件中声明开启
+         * ```properties
+         * zeppx.router.table.dump = true
+         * ```
+         */
+        private const val KEY_DUMP_ROUTER_TABLE = "zeppx.router.table.dump"
 
         // https://github.com/JetBrains/kotlin/blob/master/libraries/tools/kotlin-gradle-plugin/src/common/resources/META-INF/gradle-plugins/kotlin-android.properties
         private val KOTLIN_PLUGINS = arrayOf(
@@ -109,46 +127,46 @@ class RouterPlugin : Plugin<Project> {
             "org.jetbrains.kotlin.kapt"
         )
 
-        private val excludes = listOf(
-            // 类库本身不做插桩操作
-            "com/chenenyu/router/annotation/**",
-            "org/objectweb/asm/**",
-            "io/reactivex/**",
-            "com/facebook/**",
-            "com/google/**",
-            "android/**",
-            "androidx/**",
-            "kotlin/**",
-            "kotlinx/**",
-            "com/android/**",
-            "android/support/**",
-            "okhttp/**",
-            "okhttp3/**", // https://github.com/square/okhttp
-            "retrofit2/**", // https://github.com/square/retrofit
-            "okio/**", // https://github.com/square/okio
-            "dagger/**",
-            "org/**",
-            "**/R",
-            "**/R$**",
-            "**/BuildConfig",
-            "**/Manifest",
-            "**/databinding/**",
-            "com/bumptech/glide/**", // https://github.com/bumptech/glide
-            "com/airbnb/lottie/**", // https://github.com/airbnb/lottie-android
-            "com/squareup/**", // https://github.com/airbnb/lottie-android
-            "org/koin/**", // https://github.com/InsertKoinIO/koin
-            "coil/**", // https://github.com/coil-kt/coil
-            "com/alipay/**",
-            "com/amap/**",
-            "com/tencent/**",
-            "com/twitter/**",
-            "com/datatheorem/android/**",
-            "de/greenrobot/**",
-            "io/github/**",
-            "net/sourceforge/**",
-            "com/mobeta/android/dslv/**",
-            "com/beaglebuddy/**"
-        )
+//        private val excludes = listOf(
+//            // 类库本身不做插桩操作
+//            "com/chenenyu/router/annotation/**",
+//            "org/objectweb/asm/**",
+//            "io/reactivex/**",
+//            "com/facebook/**",
+//            "com/google/**",
+//            "android/**",
+//            "androidx/**",
+//            "kotlin/**",
+//            "kotlinx/**",
+//            "com/android/**",
+//            "android/support/**",
+//            "okhttp/**",
+//            "okhttp3/**", // https://github.com/square/okhttp
+//            "retrofit2/**", // https://github.com/square/retrofit
+//            "okio/**", // https://github.com/square/okio
+//            "dagger/**",
+//            "org/**",
+//            "**/R",
+//            "**/R$**",
+//            "**/BuildConfig",
+//            "**/Manifest",
+//            "**/databinding/**",
+//            "com/bumptech/glide/**", // https://github.com/bumptech/glide
+//            "com/airbnb/lottie/**", // https://github.com/airbnb/lottie-android
+//            "com/squareup/**", // https://github.com/airbnb/lottie-android
+//            "org/koin/**", // https://github.com/InsertKoinIO/koin
+//            "coil/**", // https://github.com/coil-kt/coil
+//            "com/alipay/**",
+//            "com/amap/**",
+//            "com/tencent/**",
+//            "com/twitter/**",
+//            "com/datatheorem/android/**",
+//            "de/greenrobot/**",
+//            "io/github/**",
+//            "net/sourceforge/**",
+//            "com/mobeta/android/dslv/**",
+//            "com/beaglebuddy/**"
+//        )
     }
 
 }

@@ -16,6 +16,7 @@ import org.w3c.dom.NodeList
 import java.io.Closeable
 import java.io.File
 import java.io.IOException
+import java.util.Locale
 import java.util.jar.JarEntry
 import java.util.jar.JarOutputStream
 import java.util.zip.ZipException
@@ -48,6 +49,9 @@ internal fun JarOutputStream.createDirectory(name: String) {
     }
 }
 
+inline val String.capitalize: String
+    get() = replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+
 /**
  * 获取 Properties 属性
  *
@@ -56,11 +60,13 @@ internal fun JarOutputStream.createDirectory(name: String) {
  *
  * @since 0.0.1
  */
-@Suppress("UNCHECKED_CAST")
-internal fun <T> Project.property(key: String, default: T): T =
-    project.findProperty(key) as? T ?: default
+//internal inline fun <reified T> Project.property(key: String, default: T): T =
+//    project.findProperty(key) as? T ?: default
+internal fun Project.property(key: String, default: Any): String =
+    project.properties[key]?.toString() ?: default.toString()
 
-internal fun Project.isAndroid(): Boolean {
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun Project.isAndroid(): Boolean {
     return plugins.filterIsInstance(AndroidBasePlugin::class.java).isNotEmpty()
 //    return project.plugins.toList().any { plugin -> plugin is AndroidBasePlugin }
 }

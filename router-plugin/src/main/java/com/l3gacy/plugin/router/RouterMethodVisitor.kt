@@ -1,6 +1,5 @@
 package com.l3gacy.plugin.router
 
-import com.l3gacy.plugin.internal.Log
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.commons.AdviceAdapter
 
@@ -62,9 +61,9 @@ internal class RouterMethodVisitor(
      */
     override fun visitInsn(opcode: Int) {
         if (opcode == RETURN) {
-            Log.v("visitInsn 我被执行了")
+//            Log.v("visitInsn 我被执行了")
             records.forEach { (key, value) ->
-                Log.v("$key - $value")
+//                Log.v("$key - $value")
                 value.forEach { classname ->
                     mv.visitTypeInsn(NEW, classname)
                     mv.visitInsn(DUP)
