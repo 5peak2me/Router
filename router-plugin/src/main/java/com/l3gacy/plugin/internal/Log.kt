@@ -47,7 +47,7 @@ import org.slf4j.helpers.MessageFormatter
 @Suppress("unused")
 internal object Log {
 
-    private const val TAG = "[>>> ZeppX <<<]"
+    private const val TAG = "[>>> Router <<<]"
 
     private val logger = Logging.getLogger(TAG)
 

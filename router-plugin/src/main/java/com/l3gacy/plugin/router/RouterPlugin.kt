@@ -67,7 +67,7 @@ class RouterPlugin : Plugin<Project> {
                         group = "router"
                         description = "Transform ApiHub class for ${variant.name}"
                         this.dump.set(dump)
-                        doc.set(layout.buildDirectory.file("zeppx/router/routers-${variant.name}.json"))
+                        doc.set(layout.buildDirectory.file("router/routers-${variant.name}.json"))
                     }
                     variant.artifacts.forScope(ScopedArtifacts.Scope.ALL)
                         .use(taskProvider)
@@ -94,26 +94,26 @@ class RouterPlugin : Plugin<Project> {
         /**
          * 打印路由插件日志的键值，默认关闭。可通过在 gradle.properties 文件中声明开启
          * ```properties
-         * zeppx.router.debuggable = true
+         * router.debuggable = true
          * ```
          */
-        private const val KEY_ROUTER_DEBUGGABLE = "zeppx.router.debuggable"
+        private const val KEY_ROUTER_DEBUGGABLE = "router.debuggable"
 
         /**
          * 打印生成器日志的键值，默认关闭。可通过在 gradle.properties 文件中声明开启
          * ```properties
-         * zeppx.router.compiler.log = true
+         * router.compiler.log = true
          * ```
          */
-        private const val KEY_ROUTER_COMPILER_LOG = "zeppx.router.compiler.log"
+        private const val KEY_ROUTER_COMPILER_LOG = "router.compiler.log"
 
         /**
          * 生成路由表json文件的键值，默认关闭。可通过在 gradle.properties 文件中声明开启
          * ```properties
-         * zeppx.router.table.dump = true
+         * router.table.dump = true
          * ```
          */
-        private const val KEY_DUMP_ROUTER_TABLE = "zeppx.router.table.dump"
+        private const val KEY_DUMP_ROUTER_TABLE = "router.table.dump"
 
         // https://github.com/JetBrains/kotlin/blob/master/libraries/tools/kotlin-gradle-plugin/src/common/resources/META-INF/gradle-plugins/kotlin-android.properties
         private val KOTLIN_PLUGINS = arrayOf(
