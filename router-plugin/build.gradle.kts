@@ -3,7 +3,6 @@ plugins {
     id("java-gradle-plugin")
 //    id("org.jetbrains.kotlin.jvm")
 //    id("org.jetbrains.kotlin.jvm") version "1.7.20"
-//    id("com.jfrog.artifactory") version "4.29.2"
     `kotlin-dsl`
 }
 
@@ -14,8 +13,8 @@ repositories {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 group = "com.l3gacy.plugin"
@@ -35,8 +34,9 @@ dependencies {
 
     implementation("com.joom.grip:grip:0.9.1")
 
-//    compileOnly("com.android.tools.build:gradle:8.1.1")
-    compileOnly("com.android.tools.build:gradle-api:8.1.1")
+    compileOnly("com.android.tools.build:gradle:8.1.1")
+    compileOnly("com.android.tools:common:31.1.1")
+//    compileOnly("com.android.tools.build:gradle-api:8.1.1")
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0")
 
     // https://central.sonatype.com/artifact/org.ow2.asm/asm/9.4
