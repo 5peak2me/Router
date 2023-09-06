@@ -10,10 +10,6 @@ targetCompatibility = JavaVersion.VERSION_1_8
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.squareup:javapoet:1.13.0'
-//    compile project(':annotation')
-    implementation "com.chenenyu.router:annotation:${ANNOTATION_VERSION}"
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.squareup:javapoet:1.13.0'
 //    implementation project(':annotation')
     implementation "com.chenenyu.router:annotation:${ANNOTATION_VERSION}"
 }
