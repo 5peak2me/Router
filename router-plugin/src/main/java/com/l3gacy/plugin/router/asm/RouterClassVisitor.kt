@@ -1,4 +1,4 @@
-package com.l3gacy.plugin.router
+package com.l3gacy.plugin.router.asm
 
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor

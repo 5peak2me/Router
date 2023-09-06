@@ -1,5 +1,7 @@
 package com.l3gacy.plugin.router.task
 
+import com.android.build.gradle.internal.tasks.BuildAnalyzer
+import com.android.buildanalyzer.common.TaskCategory
 import com.joom.grip.Grip
 import com.joom.grip.GripFactory
 import com.joom.grip.classes
@@ -7,7 +9,7 @@ import com.joom.grip.interfaces
 import com.joom.grip.mirrors.getType
 import com.l3gacy.plugin.internal.Log
 import com.l3gacy.plugin.router.internal.separator
-import com.l3gacy.plugin.router.RouterClassVisitor
+import com.l3gacy.plugin.router.asm.RouterClassVisitor
 import com.l3gacy.plugin.internal.Stopwatch
 import groovy.json.JsonOutput
 import org.gradle.api.DefaultTask
@@ -15,15 +17,15 @@ import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.Incremental
+import org.gradle.work.InputChanges
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes
@@ -45,22 +47,21 @@ import java.util.jar.JarOutputStream
  * - [Developing Custom Gradle Task Types](https://docs.gradle.org/current/userguide/custom_tasks.html)
  */
 @CacheableTask
+@BuildAnalyzer(primaryTaskCategory = TaskCategory.SOURCE_PROCESSING)
 internal abstract class RouterClassesTask : DefaultTask() {
 
+    @get:Incremental
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val jars: ListProperty<RegularFile>
 
+    @get:Incremental
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val dirs: ListProperty<Directory>
 
     @get:OutputFile
     abstract val output: RegularFileProperty
-
-    @get:Optional
-    @get:Input
-    abstract val dump: Property<Boolean>
 
     @get:Optional
     @get:OutputFile
@@ -70,7 +71,7 @@ internal abstract class RouterClassesTask : DefaultTask() {
 //    abstract fun getWorkerExecutor(): WorkerExecutor
 
     @TaskAction
-    fun taskAction() {
+    fun taskAction(inputChanges: InputChanges) {
         val timer = Stopwatch()
 
         timer.start("Router::: Transform started on thread: [${Thread.currentThread().name}]")
@@ -101,7 +102,7 @@ internal abstract class RouterClassesTask : DefaultTask() {
             processDirs(jarOutput)
         }
 
-        if (dump.get()) {
+        if (doc.isPresent) {
             dumpJson(map)
             timer.splitTime("Router::: Dump Router tables time")
             Log.v("Router::: Router tables path : ${doc.asFile.get().path}")

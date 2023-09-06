@@ -14,7 +14,6 @@ import com.l3gacy.plugin.router.task.RouterClassesTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.register
-import java.util.Locale
 
 /**
  *
@@ -62,12 +61,13 @@ class RouterPlugin : Plugin<Project> {
                 val androidComponents = extensions.findByType(AndroidComponentsExtension::class.java)
                 androidComponents?.onVariants { variant ->
                     val variantName = variant.name.capitalize
-                    val name = "gather${variantName}RouteTables"
+                    val name = "transformClassesWithRouterFor$variantName"
                     val taskProvider = tasks.register<RouterClassesTask>(name) {
                         group = "router"
                         description = "Transform ApiHub class for ${variant.name}"
-                        this.dump.set(dump)
-                        doc.set(layout.buildDirectory.file("router/routers-${variant.name}.json"))
+                        if (dump) {
+                            doc.set(layout.buildDirectory.file("router/routers-${variant.name}.json"))
+                        }
                     }
                     variant.artifacts.forScope(ScopedArtifacts.Scope.ALL)
                         .use(taskProvider)
