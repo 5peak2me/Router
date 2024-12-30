@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -37,6 +38,9 @@ dependencies {
     api "androidx.startup:startup-runtime:1.1.0"
     //    api project(':annotation')
     api "com.chenenyu.router:annotation:${ANNOTATION_VERSION}"
+
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("androidx.test.ext:junit-ktx:1.2.1")
 }
 
 ext {
